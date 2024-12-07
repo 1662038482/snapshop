@@ -24,7 +24,7 @@ const controlCv = useControlCv();
 const refCanvas = ref();
 
 onKeyStroke(
-    ['w', 'W', 'ArrowUp', 'a', 'A', 'ArrowLeft', 's', 'S', 'ArrowDown', 'd', 'D', 'ArrowRight'],
+    ['w', 'W', 'ArrowUp', 'a', 'A', 'ArrowLeft', 's', 'S', 'ArrowDown', 'd', 'D', 'ArrowRight', 'r', 'R'],
     e => {
         e.preventDefault();
         let x = coordinateStore.x;
@@ -49,6 +49,10 @@ onKeyStroke(
             case 'D':
             case 'ArrowRight':
                 x++;
+                break;
+            case 'r':
+            case 'R':
+                refCanvas.value?.handleClickLoadRemote();
                 break;
             default:
                 break;

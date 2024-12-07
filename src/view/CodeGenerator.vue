@@ -84,6 +84,7 @@ const flowSteps = computed<string[][]>(() =>
     )
 );
 const codes = ref<string[]>([]);
+const addingPointcActionColorOffset = ref<string>('');
 
 const handleClickAddStep = (flowName: string, toStep: number) => {
     switch (addingGenerateAction.value) {
@@ -110,6 +111,7 @@ const handleClickAddStep = (flowName: string, toStep: number) => {
                 action: GenerateActions.Pointc,
                 index: addingPointcActionMode.value === '指定点' ? addingPointcActionIndex.value : 'n',
                 format: addingPointcActionFormat.value,
+                colorOffset: addingPointcActionColorOffset.value
             });
             break;
         case GenerateActions.Area:
@@ -273,6 +275,14 @@ onMounted(() => {
                                 <a-select-option :value="ColorFormat.Dec">十进制</a-select-option>
                                 <a-select-option :value="ColorFormat.Rgb">RGB</a-select-option>
                             </a-select>
+                            <a-input
+                                v-model:value="addingPointcActionColorOffset"
+                                placeholder="偏色值(可选，如: 101010)"
+                                allowClear
+                                style="width: 100%"
+                            >
+                                <template #addonBefore>偏色</template>
+                            </a-input>
                         </a-row>
                         <a-row v-if="addingGenerateAction === GenerateActions.Area" style="width: 75%">
                             <a-select v-model:value="addingAreaActionLtrb" style="width: 100%">

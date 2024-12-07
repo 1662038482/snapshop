@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import Jimp from 'jimp/browser/lib/jimp';
 import Axios, { AxiosError } from 'axios';
 import { message } from 'ant-design-vue';
+import { useVscode, VscodeMessageCommand } from '../plugins/Vscode';
 
 export interface ICaptureState {
     tabIndex: number;
@@ -202,5 +203,33 @@ export const useCaptureStore = defineStore('capture', {
 
             this.setCapture(activeJimp, base64);
         },
+        async cropCapture(x1: number, y1: number, x2: number, y2: number) {
+            const activeJimp = this.activeJimp;
+            const startX = Math.min(x1, x2);
+            const startY = Math.min(y1, y2);
+            const width = Math.abs(x2 - x1);
+            const height = Math.abs(y2 - y1);
+
+            // Create new cropped image
+            const croppedJimp = await activeJimp.clone().crop(startX, startY, width, height);
+            const base64 = await croppedJimp.getBase64Async(Jimp.MIME_PNG);
+            
+            // Add as new capture
+            const capture = this.addCapture(croppedJimp, base64);
+            this.activeKey = capture.key;
+            return capture.key;
+        },
+        async saveCapture(key: string) {
+            if (import.meta.env.VITE_APP_ENV === 'vscode') {
+                const vscode = useVscode();
+                vscode.postMessage({
+                    command: VscodeMessageCommand.saveImage,
+                    data: {
+                        key,
+                        base64: this.captures.find(c => c.key === key)?.base64
+                    }
+                });
+            }
+        }
     },
 });

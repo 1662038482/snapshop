@@ -62,6 +62,7 @@ export interface PointcGenerateStep extends BaseGenerateStep {
     action: GenerateActions.Pointc;
     index: number | 'n';
     format: ColorFormat;
+    colorOffset?: string;
 }
 
 export interface AreaGenerateStep extends BaseGenerateStep {
@@ -95,19 +96,62 @@ export interface ICodeState {
 }
 
 export const defaultCode: ICodeState = {
+
     flow1: [
-        { action: GenerateActions.Text, text: `{'undefined',{` },
-        { action: GenerateActions.Text, text: `{` },
-        { action: GenerateActions.Pointx, index: 'n', deltaIndex: 0 },
-        { action: GenerateActions.Text, text: `,` },
-        { action: GenerateActions.Pointy, index: 'n', deltaIndex: 0 },
-        { action: GenerateActions.Text, text: `,0x` },
-        { action: GenerateActions.Pointc, index: 'n', format: ColorFormat.LowerHex },
-        { action: GenerateActions.Text, text: `},` },
-        { action: GenerateActions.Repeat, steps: 7, from: 1, to: 'n' },
-        { action: GenerateActions.Text, text: `},},` },
+        { action: GenerateActions.Text, text: '{'},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Left },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Top },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Right },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Bottom },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Text, text: '"'},
+        { action: GenerateActions.Pointc, index: 1, format: ColorFormat.UpperHex },
+        { action: GenerateActions.Text, text: '"'},
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Pointx, index: 'n', deltaIndex: 1 },
+        { action: GenerateActions.Text, text: '|'},
+        { action: GenerateActions.Pointy, index: 'n', deltaIndex: 1 },
+        { action: GenerateActions.Text, text: '|'},
+        { action: GenerateActions.Pointc, index: 'n', format: ColorFormat.UpperHex, colorOffset: '101010' },
+        { action: GenerateActions.Text, text: '|'},
+        { action: GenerateActions.Repeat, steps: 7, from: 2, to: 'n' },
+        { action: GenerateActions.Delete, count: 1 },
+        { action: GenerateActions.Text, text: '",'},
+        { action: GenerateActions.Text, text: '0.95,'},
+        { action: GenerateActions.Text, text: '0'},
+        { action: GenerateActions.Text, text: '}'},
     ],
+
     flow2: [
+        { action: GenerateActions.Text, text: '{"",'},
+        { action: GenerateActions.Text, text: '0.95,'},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Left },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Top },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Right },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Area, ltrb: AreaLtrb.Bottom },
+        { action: GenerateActions.Text, text: ','},
+        { action: GenerateActions.Text, text: '"'},
+        { action: GenerateActions.Pointc, index: 1, format: ColorFormat.UpperHex },
+        { action: GenerateActions.Text, text: '"'},
+        { action: GenerateActions.Text, text: ',"'},
+        { action: GenerateActions.Pointx, index: 'n', deltaIndex: 1 },
+        { action: GenerateActions.Text, text: '|'},
+        { action: GenerateActions.Pointy, index: 'n', deltaIndex: 1 },
+        { action: GenerateActions.Text, text: '|'},
+        { action: GenerateActions.Pointc, index: 'n', format: ColorFormat.UpperHex, colorOffset: '101010' },
+        { action: GenerateActions.Text, text: '|'},
+        { action: GenerateActions.Repeat, steps: 7, from: 2, to: 'n' },
+        { action: GenerateActions.Delete, count: 1 },
+        { action: GenerateActions.Text, text: '"}'},
+    ],
+   
+    flow3: [
         { action: GenerateActions.Text, text: `{'undefined',` },
         { action: GenerateActions.Text, text: `{0x` },
         { action: GenerateActions.Pointc, index: 1, format: ColorFormat.LowerHex },
@@ -123,8 +167,21 @@ export const defaultCode: ICodeState = {
         { action: GenerateActions.Text, text: `'},` },
         { action: GenerateActions.Text, text: `}, ` },
     ],
-    flow3: [],
-    flow4: [],
+
+    flow4: [
+        { action: GenerateActions.Text, text: `{'undefined',{` },
+        { action: GenerateActions.Text, text: `{` },
+        { action: GenerateActions.Pointx, index: 'n', deltaIndex: 0 },
+        { action: GenerateActions.Text, text: `,` },
+        { action: GenerateActions.Pointy, index: 'n', deltaIndex: 0 },
+        { action: GenerateActions.Text, text: `,0x` },
+        { action: GenerateActions.Pointc, index: 'n', format: ColorFormat.LowerHex },
+        { action: GenerateActions.Text, text: `},` },
+        { action: GenerateActions.Repeat, steps: 7, from: 1, to: 'n' },
+        { action: GenerateActions.Text, text: `},},` },
+    ],
+   
+
     flow5: [],
     flow6: [],
     flow7: [],
@@ -265,6 +322,9 @@ export const useCodeStore = defineStore('code', {
                                     break;
                             }
                             code = code + c;
+                            if (step.colorOffset) {
+                                code = code + `-${step.colorOffset}`;
+                            }
                         }
                         break;
 

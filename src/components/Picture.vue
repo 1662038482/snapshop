@@ -55,12 +55,28 @@ watchEffect(() => {
         coordinateStore.resetCoordinate();
     }
 });
+
+const points = computed(() => recordStore.records);
 </script>
 
 <template>
     <div class="img-container">
         <div class="img-area" :style="areaStyle"></div>
         <img ref="refImgContent" class="img-content" :src="base64" alt="" draggable="false" @click="handleClickImg" />
+        
+        <!-- 添加点的标记 -->
+        <div v-for="(point, index) in points" 
+             :key="point.key"
+             class="point-marker"
+             :style="{
+                 left: `${point.x}px`,
+                 top: `${point.y}px`,
+                 backgroundColor: index === 0 ? '#ff0000' : '#00ff00'
+             }"
+             :title="`点${point.key}: (${point.x}, ${point.y})`"
+        >
+            <span class="point-label">{{ point.key }}</span>
+        </div>
     </div>
 </template>
 
@@ -83,5 +99,33 @@ watchEffect(() => {
     z-index: 1;
     max-width: none;
     max-height: none;
+}
+
+.point-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid white;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    cursor: default;
+}
+
+.point-label {
+    color: white;
+    font-size: 10px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+}
+
+.zoom-container {
+    position: relative;
+    /* ... existing styles */
 }
 </style>

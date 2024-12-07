@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import {
     CloseCircleOutlined,
@@ -16,9 +16,11 @@ import { useCaptureStore } from '../store/Capture';
 import { useConfigurationStore } from '../store/Configuration';
 import PictureVue from './Picture.vue';
 import OpenerVue from './Opener.vue';
+import { useRecordStore } from '../store/Record';
 
 const captureStore = useCaptureStore();
 const configurationStore = useConfigurationStore();
+const recordStore = useRecordStore();
 
 const refOpener = ref();
 const { activeKey, captures, loading: spinning } = storeToRefs(captureStore);
@@ -108,6 +110,7 @@ const handleDrop = async (e: DragEvent) => {
             const key = await captureStore.addCaptureFromFile(file);
             captureStore.activeKey = key;
         }
+        recordStore.refetchRecord();
     } catch (error) {
         if (error instanceof Error) {
             message.error('打开图片失败: ' + error.message);
@@ -119,6 +122,15 @@ const handleDrop = async (e: DragEvent) => {
 const handleClickOpen = () => {
     refOpener.value.handleClickOpen();
 };
+
+const points = computed(() => recordStore.records);
+
+watch(
+    () => captureStore.activeKey,
+    () => {
+        recordStore.refetchRecord();
+    }
+);
 
 defineExpose({
     handleClickLoadRemote,

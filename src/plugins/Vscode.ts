@@ -3,6 +3,7 @@ import { App, Plugin, getCurrentInstance } from 'vue';
 export enum VscodeMessageCommand {
     getItem = 'getItem',
     setItem = 'setItem',
+    saveImage = 'saveImage'
 }
 
 export interface VscodeMessage {

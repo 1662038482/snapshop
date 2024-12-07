@@ -27,10 +27,10 @@ export interface IConfigurationState {
 
 export const defaultConfiguration: IConfigurationState = {
     loadCaptureMode: LoadCaptureMode.fromApi1,
-    loadCaptureApi1: '',
+    loadCaptureApi1: 'http://localhost:8888',
     loadCaptureApi2: '',
     loadCaptureApi3: '',
-    colorMode: ColorMode.hexWith0x,
+    colorMode: ColorMode.hex,
     showSameCoordinate: false,
 };
 
